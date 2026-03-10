@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IT Vocabulary Postcard</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f0f4f8;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+      .header {
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      select {
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-bottom: 20px;
+        cursor: pointer;
+        outline: none;
+      }
+      .postcard {
+        background: linear-gradient(135deg, #ffffff 0%, #e6f2ff 100%);
+        width: 90%;
+        max-width: 550px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        text-align: center;
+        position: relative;
+        border: 2px solid #d1e8ff;
+      }
+      .word {
+        font-size: 36px;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 5px;
+      }
+      .ipa {
+        font-size: 20px;
+        color: #e74c3c;
+        font-family: "Courier New", Courier, monospace;
+        margin-bottom: 5px;
+      }
+      .type {
+        font-size: 18px;
+        color: #7f8c8d;
+        font-style: italic;
+        margin-bottom: 20px;
+      }
+      .meaning {
+        font-size: 24px;
+        color: #34495e;
+        margin-bottom: 30px;
+        line-height: 1.4;
+      }
+      .controls {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+      }
+      button {
+        padding: 12px 24px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: bold;
+      }
+      .btn-listen {
+        background-color: #3498db;
+        color: white;
+      }
+      .btn-listen:hover {
+        background-color: #2980b9;
+      }
+      .btn-nav {
+        background-color: #2ecc71;
+        color: white;
+      }
+      .btn-nav:hover {
+        background-color: #27ae60;
+      }
+      .counter {
+        margin-top: 15px;
+        color: #95a5a6;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>IT English Postcard</h1>
+      <select id="unitSelect" onchange="changeUnit()">
+        <option value="1">Unit 1: Computer Users</option>
+        <option value="2">Unit 2: Computer Architecture</option>
+        <option value="3">Unit 3: Computer Design</option>
+        <option value="4">Unit 4: Peripherals</option>
+        <option value="5">Unit 5: Interview: Computing Support</option>
+        <option value="6">Unit 6: Operating Systems</option>
+      </select>
+    </div>
+
+    <div class="postcard" id="card">
+      <div class="word" id="en-word">Word</div>
+      <div class="ipa" id="word-ipa">/ipa/</div>
+      <div class="type" id="word-type">(type)</div>
+      <div class="meaning" id="vi-meaning">Nghĩa tiếng Việt</div>
+
+      <div class="controls">
+        <button class="btn-nav" onclick="prevWord()">&#8592; Trước</button>
+        <button class="btn-listen" onclick="speakWord()">🔊 Phát âm</button>
+        <button class="btn-nav" onclick="nextWord()">Tiếp &#8594;</button>
+      </div>
+      <div class="counter" id="counter">1 / 10</div>
+    </div>
+
+    <script>
+      const vocabData = {
+        1: [
+          {
+            word: "Manipulate",
+            ipa: "/məˈnɪpjʊleɪt/",
+            type: "(v)",
+            vi: "Thao tác, xử lý (dữ liệu)",
+          },
+          {
+            word: "Convert",
+            ipa: "/kənˈvɜːrt/",
+            type: "(v)",
+            vi: "Chuyển đổi (định dạng, tín hiệu)",
+          },
+          {
+            word: "Versatile",
+            ipa: "/ˈvɜːrsətl/",
+            type: "(adj)",
+            vi: "Đa năng, linh hoạt",
+          },
+          {
+            word: "Acronym",
+            ipa: "/ˈækrənɪm/",
+            type: "(n)",
+            vi: "Từ viết tắt (ví dụ: RAM, CPU)",
+          },
+          {
+            word: "Vast",
+            ipa: "/væst/",
+            type: "(adj)",
+            vi: "Khổng lồ, bao la (thường dùng cho dữ liệu)",
+          },
+          {
+            word: "Execution",
+            ipa: "/ˌeksɪˈkjuːʃn/",
+            type: "(n)",
+            vi: "Sự thực thi (lệnh)",
+          },
+          {
+            word: "Simulation",
+            ipa: "/ˌsɪmjuˈleɪʃn/",
+            type: "(n)",
+            vi: "Sự mô phỏng",
+          },
+          {
+            word: "Automated",
+            ipa: "/ˈɔːtəmeɪtɪd/",
+            type: "(adj)",
+            vi: "Tự động hóa",
+          },
+          {
+            word: "Synchronize",
+            ipa: "/ˈsɪŋkrənaɪz/",
+            type: "(v)",
+            vi: "Đồng bộ hóa",
+          },
+          {
+            word: "Integrated",
+            ipa: "/ˈɪntɪɡreɪtɪd/",
+            type: "(adj)",
+            vi: "Tích hợp",
+          },
+          {
+            word: "Mainframe",
+            ipa: "/ˈmeɪnfreɪm/",
+            type: "(n)",
+            vi: "Máy tính lớn (hệ thống xử lý cực mạnh)",
+          },
+          {
+            word: "Workstation",
+            ipa: "/ˈwɜːrksteɪʃn/",
+            type: "(n)",
+            vi: "Trạm làm việc (máy tính cấu hình cao)",
+          },
+          {
+            word: "Digitalize",
+            ipa: "/ˈdɪdʒɪtəlaɪz/",
+            type: "(v)",
+            vi: "Số hóa",
+          },
+          {
+            word: "Peripheral",
+            ipa: "/pəˈrɪfərəl/",
+            type: "(n)",
+            vi: "Thiết bị ngoại vi",
+          },
+          { word: "Process", ipa: "/ˈprɑːses/", type: "(v)", vi: "Xử lý" },
+          {
+            word: "Configuration",
+            ipa: "/kənˌfɪɡjəˈreɪʃn/",
+            type: "(n)",
+            vi: "Cấu hình",
+          },
+          {
+            word: "Hardware",
+            ipa: "/ˈhɑːrdwer/",
+            type: "(n)",
+            vi: "Phần cứng",
+          },
+          {
+            word: "Interface",
+            ipa: "/ˈɪntərfeɪs/",
+            type: "(n)",
+            vi: "Giao diện",
+          },
+        ],
+        2: [
+          {
+            word: "Microprocessor",
+            ipa: "/ˌmaɪkroʊˈprɑːsesər/",
+            type: "(n)",
+            vi: "Bộ vi xử lý",
+          },
+          {
+            word: "Arithmetic Logic Unit (ALU)",
+            ipa: "/əˈrɪθmətɪk ˈlɑːdʒɪk ˈjuːnɪt/",
+            type: "(n)",
+            vi: "Đơn vị số học và logic",
+          },
+          {
+            word: "Control Unit",
+            ipa: "/kənˈtroʊl ˈjuːnɪt/",
+            type: "(n)",
+            vi: "Đơn vị điều khiển",
+          },
+          {
+            word: "Register",
+            ipa: "/ˈredʒɪstər/",
+            type: "(n)",
+            vi: "Thanh ghi",
+          },
+          {
+            word: "Bus",
+            ipa: "/bʌs/",
+            type: "(n)",
+            vi: "Đường truyền dữ liệu nội bộ",
+          },
+          {
+            word: "Clock speed",
+            ipa: "/klɑːk spiːd/",
+            type: "(n)",
+            vi: "Tốc độ xung nhịp",
+          },
+          {
+            word: "Volatility",
+            ipa: "/ˌvɑːləˈtɪləti/",
+            type: "(n)",
+            vi: "Tính dễ mất dữ liệu (của RAM khi mất điện)",
+          },
+          {
+            word: "Expandable",
+            ipa: "/ɪkˈspændəbl/",
+            type: "(adj)",
+            vi: "Có thể mở rộng",
+          },
+          {
+            word: "Instruction set",
+            ipa: "/ɪnˈstrʌkʃn set/",
+            type: "(n)",
+            vi: "Tập lệnh",
+          },
+          {
+            word: "Throughput",
+            ipa: "/ˈθruːpʊt/",
+            type: "(n)",
+            vi: "Băng thông xử lý",
+          },
+          {
+            word: "Motherboard",
+            ipa: "/ˈmʌðərbɔːrd/",
+            type: "(n)",
+            vi: "Bo mạch chủ",
+          },
+          {
+            word: "Cache memory",
+            ipa: "/kæʃ ˈmeməri/",
+            type: "(n)",
+            vi: "Bộ nhớ đệm",
+          },
+          {
+            word: "Binary system",
+            ipa: "/ˈbaɪnəri ˈsɪstəm/",
+            type: "(n)",
+            vi: "Hệ nhị phân",
+          },
+          {
+            word: "Semiconductor",
+            ipa: "/ˌsemikənˈdʌktər/",
+            type: "(n)",
+            vi: "Bán dẫn",
+          },
+          {
+            word: "Nanosecond",
+            ipa: "/ˈnænoʊsekənd/",
+            type: "(n)",
+            vi: "Một phần tỉ giây",
+          },
+          {
+            word: "Circuitry",
+            ipa: "/ˈsɜːrkɪtri/",
+            type: "(n)",
+            vi: "Hệ thống mạch điện",
+          },
+          { word: "Decode", ipa: "/diːˈkoʊd/", type: "(v)", vi: "Giải mã" },
+          {
+            word: "Retrieve",
+            ipa: "/rɪˈtriːv/",
+            type: "(v)",
+            vi: "Truy xuất, lấy lại (dữ liệu)",
+          },
+          {
+            word: "Main memory",
+            ipa: "/meɪn ˈmeməri/",
+            type: "(n)",
+            vi: "Bộ nhớ chính",
+          },
+        ],
+        3: [
+          {
+            word: "Form factor",
+            ipa: "/fɔːrm ˈfæktər/",
+            type: "(n)",
+            vi: "Hệ số hình dạng (kích thước vật lý)",
+          },
+          {
+            word: "Ergonomic",
+            ipa: "/ˌɜːrɡəˈnɑːmɪk/",
+            type: "(adj)",
+            vi: "Công thái học (thiết kế tối ưu cho người dùng)",
+          },
+          {
+            word: "Resolution",
+            ipa: "/ˌrezəˈluːʃn/",
+            type: "(n)",
+            vi: "Độ phân giải",
+          },
+          {
+            word: "Scalability",
+            ipa: "/ˌskeɪləˈbɪləti/",
+            type: "(n)",
+            vi: "Khả năng mở rộng quy mô",
+          },
+          {
+            word: "Dimensions",
+            ipa: "/daɪˈmenʃnz/",
+            type: "(n)",
+            vi: "Kích thước (dài, rộng, cao)",
+          },
+          {
+            word: "Robust",
+            ipa: "/roʊˈbʌst/",
+            type: "(adj)",
+            vi: "Mạnh mẽ, bền bỉ (về thiết kế hoặc hệ thống)",
+          },
+          {
+            word: "Liquid Crystal Display (LCD)",
+            ipa: "/ˈlɪkwɪd ˈkrɪstl dɪˈspleɪ/",
+            type: "(n)",
+            vi: "Màn hình tinh thể lỏng",
+          },
+          {
+            word: "Integrated circuit",
+            ipa: "/ˈɪntɪɡreɪtɪd ˈsɜːrkɪt/",
+            type: "(n)",
+            vi: "Vi mạch tích hợp",
+          },
+          {
+            word: "Portability",
+            ipa: "/ˌpɔːrtəˈbɪləti/",
+            type: "(n)",
+            vi: "Tính di động",
+          },
+          {
+            word: "Touchpad",
+            ipa: "/ˈtʌtʃpæd/",
+            type: "(n)",
+            vi: "Bàn di chuột cảm ứng",
+          },
+          {
+            word: "Expansion slot",
+            ipa: "/ɪkˈspænʃn slɑːt/",
+            type: "(n)",
+            vi: "Khe cắm mở rộng",
+          },
+          {
+            word: "Prototype",
+            ipa: "/ˈproʊtətaɪp/",
+            type: "(n)",
+            vi: "Nguyên mẫu",
+          },
+          {
+            word: "Battery life",
+            ipa: "/ˈbætəri laɪf/",
+            type: "(n)",
+            vi: "Thời lượng pin",
+          },
+          {
+            word: "Weightless",
+            ipa: "/ˈweɪtləs/",
+            type: "(adj)",
+            vi: "Siêu nhẹ",
+          },
+          {
+            word: "Sleek",
+            ipa: "/sliːk/",
+            type: "(adj)",
+            vi: "Kiểu dáng đẹp, bóng bẩy",
+          },
+          {
+            word: "Compatibility",
+            ipa: "/kəmˌpætəˈbɪləti/",
+            type: "(n)",
+            vi: "Tính tương thích",
+          },
+          { word: "Monitor", ipa: "/ˈmɑːnɪtər/", type: "(n)", vi: "Màn hình" },
+          {
+            word: "Processor",
+            ipa: "/ˈprɑːsesər/",
+            type: "(n)",
+            vi: "Bộ vi xử lý",
+          },
+        ],
+        4: [
+          { word: "Modem", ipa: "/ˈmoʊdəm/", type: "(n)", vi: "Bộ điều giải" },
+          {
+            word: "Backbone",
+            ipa: "/ˈbækboʊn/",
+            type: "(n)",
+            vi: "Trục chính (đường truyền chính của mạng)",
+          },
+          {
+            word: "Gateway",
+            ipa: "/ˈɡeɪtweɪ/",
+            type: "(n)",
+            vi: "Cổng kết nối giữa các mạng khác loại",
+          },
+          {
+            word: "Bridge",
+            ipa: "/brɪdʒ/",
+            type: "(n)",
+            vi: "Cầu nối (kết nối các mạng cùng loại)",
+          },
+          {
+            word: "Router",
+            ipa: "/ˈraʊtər/",
+            type: "(n)",
+            vi: "Bộ định tuyến",
+          },
+          {
+            word: "Ethernet adapter",
+            ipa: "/ˈiːθərnet əˈdæptər/",
+            type: "(n)",
+            vi: "Card mạng Ethernet",
+          },
+          {
+            word: "Twisted-pair cabling",
+            ipa: "/ˌtwɪstɪd ˈper ˈkeɪblɪŋ/",
+            type: "(n)",
+            vi: "Cáp xoắn đôi",
+          },
+          {
+            word: "Hub",
+            ipa: "/hʌb/",
+            type: "(n)",
+            vi: "Bộ tập trung (kết nối các cáp mạng)",
+          },
+          {
+            word: "Analogue signal",
+            ipa: "/ˈænəlɔːɡ ˈsɪɡnəl/",
+            type: "(n)",
+            vi: "Tín hiệu tương tự",
+          },
+          {
+            word: "Digital signal",
+            ipa: "/ˈdɪdʒɪtl ˈsɪɡnəl/",
+            type: "(n)",
+            vi: "Tín hiệu số",
+          },
+          {
+            word: "Transmission",
+            ipa: "/trænzˈmɪʃn/",
+            type: "(n)",
+            vi: "Sự truyền tải",
+          },
+          {
+            word: "Partition",
+            ipa: "/pɑːrˈtɪʃn/",
+            type: "(v)",
+            vi: "Chia tách (mạng hoặc ổ đĩa)",
+          },
+          {
+            word: "Dissimilar",
+            ipa: "/dɪˈsɪmɪlər/",
+            type: "(adj)",
+            vi: "Khác loại (không giống nhau)",
+          },
+          {
+            word: "Topology",
+            ipa: "/təˈpɑːlədʒi/",
+            type: "(n)",
+            vi: "Sơ đồ cấu trúc mạng",
+          },
+          {
+            word: "Fibre-optic",
+            ipa: "/ˌfaɪbər ˈɑːptɪk/",
+            type: "(adj)",
+            vi: "Cáp quang",
+          },
+          { word: "Socket", ipa: "/ˈsɑːkɪt/", type: "(n)", vi: "Ổ cắm" },
+          {
+            word: "Transmitter",
+            ipa: "/trænzˈmɪtər/",
+            type: "(n)",
+            vi: "Máy phát",
+          },
+          { word: "Receiver", ipa: "/rɪˈsiːvər/", type: "(n)", vi: "Máy thu" },
+          { word: "Scanner", ipa: "/ˈskænər/", type: "(n)", vi: "Máy quét" },
+          {
+            word: "Plotter",
+            ipa: "/ˈplɑːtər/",
+            type: "(n)",
+            vi: "Máy vẽ chuyên dụng",
+          },
+        ],
+        5: [
+          {
+            word: "Troubleshooting",
+            ipa: "/ˈtrʌblʃuːtɪŋ/",
+            type: "(n)",
+            vi: "Quản lý và khắc phục sự cố",
+          },
+          {
+            word: "Analytical",
+            ipa: "/ˌænəˈlɪtɪkl/",
+            type: "(adj)",
+            vi: "Có tính phân tích",
+          },
+          {
+            word: "Inquiry",
+            ipa: "/ˈɪnkwəri/",
+            type: "(n)",
+            vi: "Câu hỏi yêu cầu, thắc mắc",
+          },
+          {
+            word: "Maintenance",
+            ipa: "/ˈmeɪntənəns/",
+            type: "(n)",
+            vi: "Sự bảo trì",
+          },
+          {
+            word: "Installation",
+            ipa: "/ˌɪnstəˈleɪʃn/",
+            type: "(n)",
+            vi: "Sự cài đặt",
+          },
+          {
+            word: "Diagnostic",
+            ipa: "/ˌdaɪəɡˈnɑːstɪk/",
+            type: "(adj)",
+            vi: "Thuộc về chẩn đoán (lỗi)",
+          },
+          {
+            word: "Efficient",
+            ipa: "/ɪˈfɪʃnt/",
+            type: "(adj)",
+            vi: "Hiệu quả",
+          },
+          {
+            word: "Instruction",
+            ipa: "/ɪnˈstrʌkʃn/",
+            type: "(n)",
+            vi: "Hướng dẫn",
+          },
+          {
+            word: "Interpersonal skills",
+            ipa: "/ˌɪntərˈpɜːrsənl skɪlz/",
+            type: "(n)",
+            vi: "Kỹ năng giao tiếp",
+          },
+          {
+            word: "Help desk",
+            ipa: "/help desk/",
+            type: "(n)",
+            vi: "Bàn trợ giúp kỹ thuật",
+          },
+          { word: "Bug", ipa: "/bʌɡ/", type: "(n)", vi: "Lỗi phần mềm" },
+          {
+            word: "Flaw",
+            ipa: "/flɔː/",
+            type: "(n)",
+            vi: "Thiếu sót, lỗi nhỏ",
+          },
+          { word: "Vendor", ipa: "/ˈvendər/", type: "(n)", vi: "Nhà cung cấp" },
+          {
+            word: "Problem-solving",
+            ipa: "/ˈprɑːbləm sɑːlvɪŋ/",
+            type: "(n)",
+            vi: "Giải quyết vấn đề",
+          },
+          {
+            word: "Consultant",
+            ipa: "/kənˈsʌltənt/",
+            type: "(n)",
+            vi: "Tư vấn viên",
+          },
+          {
+            word: "Reliability",
+            ipa: "/rɪˌlaɪəˈbɪləti/",
+            type: "(n)",
+            vi: "Độ tin cậy",
+          },
+          {
+            word: "Downtime",
+            ipa: "/ˈdaʊntaɪm/",
+            type: "(n)",
+            vi: "Thời gian hệ thống ngừng hoạt động",
+          },
+        ],
+        6: [
+          {
+            word: "Multi-tasking",
+            ipa: "/ˌmʌltiˈtæskɪŋ/",
+            type: "(n)",
+            vi: "Đa nhiệm (chạy nhiều chương trình cùng lúc)",
+          },
+          {
+            word: "Graphical User Interface (GUI)",
+            ipa: "/ˈɡræfɪkl ˈjuːzər ˈɪntərfeɪs/",
+            type: "(n)",
+            vi: "Giao diện người dùng đồ họa",
+          },
+          {
+            word: "Kernel",
+            ipa: "/ˈkɜːrnl/",
+            type: "(n)",
+            vi: "Nhân (phần lõi của hệ điều hành)",
+          },
+          {
+            word: "Open source",
+            ipa: "/ˌoʊpən ˈsɔːrs/",
+            type: "(adj)",
+            vi: "Mã nguồn mở",
+          },
+          {
+            word: "Client/server structure",
+            ipa: "/ˈklaɪənt ˈsɜːrvər ˈstrʌktʃər/",
+            type: "(n)",
+            vi: "Cấu trúc khách/chủ",
+          },
+          {
+            word: "Thin client",
+            ipa: "/θɪn ˈklaɪənt/",
+            type: "(n)",
+            vi: "Máy trạm cấu hình thấp (dựa vào máy chủ)",
+          },
+          {
+            word: "Dumb terminal",
+            ipa: "/dʌm ˈtɜːrmɪnl/",
+            type: "(n)",
+            vi: "Thiết bị đầu cuối không có bộ vi xử lý",
+          },
+          {
+            word: "File-sharing",
+            ipa: "/faɪl ˈʃerɪŋ/",
+            type: "(n)",
+            vi: "Chia sẻ tệp tin",
+          },
+          {
+            word: "Utility program",
+            ipa: "/juːˈtɪləti ˈproʊɡræm/",
+            type: "(n)",
+            vi: "Chương trình tiện ích",
+          },
+          {
+            word: "Device driver",
+            ipa: "/dɪˈvaɪs ˈdraɪvər/",
+            type: "(n)",
+            vi: "Trình điều khiển thiết bị",
+          },
+          {
+            word: "Virtual memory",
+            ipa: "/ˈvɜːrtʃuəl ˈmeməri/",
+            type: "(n)",
+            vi: "Bộ nhớ ảo",
+          },
+          {
+            word: "Directory",
+            ipa: "/dəˈrektəri/",
+            type: "(n)",
+            vi: "Thư mục (danh mục tệp tin)",
+          },
+          {
+            word: "Encryption",
+            ipa: "/ɪnˈkrɪpʃn/",
+            type: "(n)",
+            vi: "Sự mã hóa",
+          },
+          {
+            word: "Compression",
+            ipa: "/kəmˈpreʃn/",
+            type: "(n)",
+            vi: "Sự nén (dữ liệu)",
+          },
+          {
+            word: "Checksum",
+            ipa: "/ˈtʃeksʌm/",
+            type: "(n)",
+            vi: "Kiểm tra lỗi dữ liệu bằng tổng kiểm",
+          },
+          {
+            word: "Segment",
+            ipa: "/ˈseɡmənt/",
+            type: "(n)",
+            vi: "Đoạn, phân đoạn (dữ liệu)",
+          },
+          {
+            word: "Full-duplex",
+            ipa: "/fʊl ˈduːpleks/",
+            type: "(adj)",
+            vi: "Song công (truyền nhận dữ liệu đồng thời)",
+          },
+          {
+            word: "Half-duplex",
+            ipa: "/hæf ˈduːpleks/",
+            type: "(adj)",
+            vi: "Bán song công (truyền nhận lần lượt)",
+          },
+          {
+            word: "Booting",
+            ipa: "/ˈbuːtɪŋ/",
+            type: "(n)",
+            vi: "Quá trình khởi động",
+          },
+        ],
+      };
+
+      let currentUnit = 1;
+      let currentIndex = 0;
+
+      function updateCard() {
+        const list = vocabData[currentUnit];
+        const item = list[currentIndex];
+
+        document.getElementById("en-word").innerText = item.word;
+        document.getElementById("word-ipa").innerText = item.ipa;
+        document.getElementById("word-type").innerText = item.type;
+        document.getElementById("vi-meaning").innerText = item.vi;
+        document.getElementById("counter").innerText =
+          `${currentIndex + 1} / ${list.length}`;
+
+        // Tự động phát âm (Có thể xóa dòng này nếu không muốn tự động đọc)
+        speakWord();
+      }
+
+      function changeUnit() {
+        currentUnit = document.getElementById("unitSelect").value;
+        currentIndex = 0;
+        updateCard();
+      }
+
+      function nextWord() {
+        if (currentIndex < vocabData[currentUnit].length - 1) {
+          currentIndex++;
+          updateCard();
+        }
+      }
+
+      function prevWord() {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateCard();
+        }
+      }
+
+      function speakWord() {
+        const wordToSpeak = document.getElementById("en-word").innerText;
+        // Xóa bớt các chữ trong ngoặc đơn nếu có (như (ALU), (LCD), (GUI)) để AI không đọc chữ trong ngoặc
+        const cleanWord = wordToSpeak.replace(/\s*\(.*?\)\s*/g, "");
+        const utterance = new SpeechSynthesisUtterance(cleanWord);
+        utterance.lang = "en-US";
+        utterance.rate = 0.9;
+        window.speechSynthesis.speak(utterance);
+      }
+
+      updateCard();
+    </script>
+  </body>
+</html>
